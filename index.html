@@ -636,17 +636,20 @@ function toast(msg){
 }
 
 /* =============================== MODALS =============================== */
+let sheetGen = 0;
 function openSheet(html){
+  const myGen = ++sheetGen;
   const root=document.getElementById('modalRoot');
   root.innerHTML = `<div class="overlay" id="ov"><div class="sheet">${html}</div></div>`;
-  requestAnimationFrame(()=>document.getElementById('ov').classList.add('open'));
+  requestAnimationFrame(()=>{ const ov=document.getElementById('ov'); if(ov) ov.classList.add('open'); });
   document.getElementById('ov').addEventListener('click', e=>{ if(e.target.id==='ov') closeSheet(); });
 }
 function closeSheet(){
+  const myGen = sheetGen;
   const ov=document.getElementById('ov');
   if(!ov) return;
   ov.classList.remove('open');
-  setTimeout(()=>{ document.getElementById('modalRoot').innerHTML=''; },180);
+  setTimeout(()=>{ if(sheetGen===myGen) document.getElementById('modalRoot').innerHTML=''; },180);
 }
 function catOptions(selectedId){
   return DataStore.state.categories.map(c=>`<option value="${c.id}" ${c.id===selectedId?'selected':''}>${c.name}</option>`).join('');
